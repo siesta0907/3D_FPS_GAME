@@ -71,14 +71,13 @@ public class playerController : MonoBehaviour
         TryJump();
         TryRun(); //반드시 무브 위에 있어야 함
         TryCrouch();
-        Move();
-       
-        MoveCheck();
-
+        float CheckMoveXZ = Move();
+        //CheckMoveXZ 로 값을 반환받은 후에,
+        MoveCheck(CheckMoveXZ);        // MoveCheck에 매개변수로 넣어줌.
         CameraRotation();
         CharacterRotation();
-        
     }
+
 
     private void TryCrouch()
     {
@@ -124,7 +123,7 @@ public class playerController : MonoBehaviour
     {
         //레이캐스트!!
         isGround = Physics.Raycast(transform.position, Vector3.down, capsuleCollider.bounds.extents.y +  0.1f);
-
+        theCrossHiar.JumpAnimation(!isGround);
     }
     private void TryJump()
     {
@@ -188,23 +187,28 @@ public class playerController : MonoBehaviour
        // thecamera2.transform.localEulerAngles = new Vector3(currentCameraRotationX1, 0f, 0f);
     
 }
-    private void Move()
+    private float Move()
+
     {
-        float _movedirX = Input.GetAxisRaw("Horizontal");
-        float _movedirZ = Input.GetAxisRaw("Vertical");
-        Vector3 _moveHorizontal = transform.right * _movedirX;
-        Vector3 _moveVertical = transform.forward * _movedirZ;
-        Vector3 _velocity = (_moveHorizontal + _moveVertical).normalized * applySpeed;
-        myRigid.MovePosition(transform.position + _velocity * Time.deltaTime);
+    float _moveDirX = Input.GetAxisRaw("Horizontal");   // -1 ~ 1이 나옴 
+    float _moveDirZ = Input.GetAxisRaw("Vertical");     // -1 ~ 1이 나옴
+    float moveXZAbsSum = Mathf.Abs(_moveDirX) + Mathf.Abs(_moveDirZ);
+  
+    Vector3 _moveHorizontal = transform.right * _moveDirX;
+    Vector3 _moveVertical = transform.forward * _moveDirZ;
 
+    Vector3 _velocity = (_moveHorizontal + _moveVertical).normalized * applySpeed;
 
+    myRigid.MovePosition(transform.position + _velocity* Time.deltaTime);  // Time.deltaTime의 값은 약 0.016이다.
+
+        return moveXZAbsSum;
     }
 
-    private void MoveCheck()
+private void MoveCheck(float MoveXZ)
     {
         if (!isRun && !isCrouch)
         {
-            if (Vector3.Distance(LastPos, transform.position) >= 0.1f) 
+            if (MoveXZ != 0)
                 iswalk = true;
             else 
                  iswalk = false;

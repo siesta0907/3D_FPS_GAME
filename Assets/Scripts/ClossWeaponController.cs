@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HandController : MonoBehaviour
+public class ClossWeaponController : MonoBehaviour
 {
     public static bool isActivate = false;
 
@@ -10,7 +10,7 @@ public class HandController : MonoBehaviour
     [SerializeField]
     private ClossWeapon currentHand;
 
-    
+
     private bool isAttack = false;
     private bool isSwing = false;
     private RaycastHit hitInfo;
@@ -18,10 +18,10 @@ public class HandController : MonoBehaviour
 
 
     // Start is called before the first frame update
-  
+
     // Update is called once per frame
     void Update()
-    { 
+    {
         if (isActivate)
             TryAttack();
     }
@@ -43,11 +43,11 @@ public class HandController : MonoBehaviour
         currentHand.anim.SetTrigger("Attack");
 
         yield return new WaitForSeconds(currentHand.attackDelayA);
-        
+
         isSwing = true;
         StartCoroutine(HitCoroutine());
         yield return new WaitForSeconds(currentHand.attackDelayB);
-        
+
         isSwing = false;
         yield return new WaitForSeconds(currentHand.attackDelay - currentHand.attackDelayA - currentHand.attackDelayB);
         isAttack = false;
@@ -59,18 +59,18 @@ public class HandController : MonoBehaviour
             if (CheckObject())
             {
                 //충돌했음.
-                isSwing = false;   
+                isSwing = false;
                 Debug.Log(hitInfo.transform.name);
             }
-           yield return null;
+            yield return null;
         }
     }
     private bool CheckObject()
     {
         if (Physics.Raycast(transform.position, transform.forward, out hitInfo, currentHand.range))
         {
-            return true; 
-        } 
+            return true;
+        }
         return false;
     }
 

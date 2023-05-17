@@ -335,6 +335,8 @@ GameObject:
   - component: {fileID: 29625673}
   - component: {fileID: 29625674}
   - component: {fileID: 29625675}
+  - component: {fileID: 29625676}
+  - component: {fileID: 29625677}
   m_Layer: 2
   m_Name: Holder
   m_TagString: Untagged
@@ -366,7 +368,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 29625671}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9e6ca1d6e81e341459cb5ce5f5a1149c, type: 3}
   m_Name: 
@@ -385,6 +387,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentGun: {fileID: 5241880626026488991}
+  isfineSightMode: 0
   theCam: {fileID: 9006923915255162993}
   hit_effect: {fileID: 4864885541059114987, guid: 27b51560b5d41d8478e466adbe035412, type: 3}
 --- !u!82 &29625675
@@ -483,6 +486,43 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &29625676
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 29625671}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbba47eb6ece6ee44bb0c73de32ce7a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentWeaponType: GUN
+  chageWeaponDelayTime: 0.1
+  chageWeaponEndDelayTime: 0.1
+  guns:
+  - {fileID: 5241880626026488991}
+  hands:
+  - {fileID: 681176300831625154}
+  gunController: {fileID: 29625674}
+  handController: {fileID: 29625673}
+--- !u!114 &29625677
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 29625671}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2763ae6c5980fe469b84517d6eb7eb3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  limitPos: {x: 0.3, y: 0.1, z: 0}
+  fineSightLimitPos: {x: 0.1, y: 0.05, z: 0}
+  smoothSway: {x: 0.05, y: 0.05, z: 0}
+  gunController: {fileID: 29625674}
 --- !u!1001 &30724690
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -18423,7 +18463,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1581951247
 Transform:
   m_ObjectHideFlags: 0
@@ -21068,7 +21108,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &681176300831625154
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21081,7 +21121,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dfe45a39e51b65c4d9913d95e7e534ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  handName: "\uB9E8\uC190"
+  ClossWeaponName: 
+  isHand: 0
+  isAxe: 0
+  isPickAxe: 0
   range: 5
   damage: 1
   workspeed: 0

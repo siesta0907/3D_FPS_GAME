@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class GunController : MonoBehaviour
 {
-    // Start is called before the first frame update
+    //현재 활성화
+    public static bool isActivate = true;
+
     [SerializeField]
     private Gun currentGun; //현재 들고 있는 총
     private CrossHair theCrossHair;
@@ -13,7 +15,7 @@ public class GunController : MonoBehaviour
     private AudioSource audioSource; //효과음
     private bool isReload; //재장전중인가
     [HideInInspector]
-    private bool isfindSightMode = false; //정조준 상태
+    public bool isfineSightMode = false; //정조준 상태
     private Vector3 originPos; //원래 좌표
     private RaycastHit hitInfo;
     
@@ -24,33 +26,49 @@ public class GunController : MonoBehaviour
 
     private void Start()
     {
+        currentGun.transform.localPosition = Vector3.zero;
         originPos = Vector3.zero;
         audioSource = GetComponent<AudioSource>();
         theCrossHair = FindObjectOfType<CrossHair>();
+
+        WeaponManager.currentWeapon = currentGun.GetComponent<Transform>();
+        WeaponManager.currentWeaponAnim = currentGun.anim;
     }
     void Update()
     {
-        GunFireRateCalc();
-        TryFire();
-        TryReload();
-        TryFindSight();
+        if (isActivate)
+        {
+            GunFireRateCalc();
+            TryFire();
+            TryReload();
+            TryFineSight();
+        }
+
     }
-    private void TryFindSight()
+    private void TryFineSight()
     {
         if (Input.GetButtonDown("Fire2"))
         {
             FindSight();
         }
     }
+    public void CancelFIneSight()
+    {
+        if (isfineSightMode)
+        {
+            StopAllCoroutines();
+            isfineSightMode = false;
+        }
+    }
     private void FindSight()
     {
-        isfindSightMode = !isfindSightMode;
+        isfineSightMode = !isfineSightMode;
 
-        currentGun.anim.SetBool("FindSightMode", isfindSightMode);
+        currentGun.anim.SetBool("FindSightMode", isfineSightMode);
 
-        theCrossHair.FineSightAnimation(isfindSightMode);
+        theCrossHair.FineSightAnimation(isfineSightMode);
 
-        if (isfindSightMode)
+        if (isfineSightMode)
         {
             StopAllCoroutines();
             StartCoroutine(FinsGightActivateCoroutine());
@@ -85,6 +103,16 @@ public class GunController : MonoBehaviour
             StartCoroutine(ReloadCoroutine());
         }
     }
+
+    public void cancelReload()
+    {
+        if (isReload)
+        {
+            StopAllCoroutines();
+            isReload = false;
+        }
+    }
+
     //발사시도
     private void TryFire()
     {
@@ -159,7 +187,7 @@ public class GunController : MonoBehaviour
         Vector3 retroActionRecoilBack = new Vector3 (currentGun.retroActionFineSightForce, currentGun.fineSightOriginPos.y, currentGun.fineSightOriginPos.z);
 
         //정조준하고 있을때
-        if (isfindSightMode)
+        if (isfineSightMode)
         {
 
             currentGun.transform.localPosition = currentGun.fineSightOriginPos;
@@ -209,7 +237,24 @@ public class GunController : MonoBehaviour
 
     public bool GetFineSightMode()
     {
-        return isfindSightMode;
+        return isfineSightMode;
+    }
+
+    public void GunChange(Gun _gun)
+    {
+        if (WeaponManager.currentWeapon!= null)
+        {
+            WeaponManager.currentWeapon.gameObject.SetActive(false);
+        }
+        currentGun = _gun;
+
+        WeaponManager.currentWeapon = currentGun.GetComponent<Transform>();
+        WeaponManager.currentWeaponAnim = currentGun.anim;
+        //초기화
+        currentGun.transform.localPosition = Vector3.zero;
+
+        currentGun.gameObject.SetActive(true);
+        isActivate = true;
     }
 }
 
