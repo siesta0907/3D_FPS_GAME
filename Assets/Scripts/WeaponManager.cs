@@ -24,17 +24,26 @@ public class WeaponManager : MonoBehaviour
     private Gun[] guns;
     [SerializeField]
     private ClossWeapon[] hands;
+    [SerializeField]
+    private ClossWeapon[] axes;
+    [SerializeField]
+    private ClossWeapon[] pickaxes;
 
     //관리차원에서 쉽게 만듬
     private Dictionary<string, Gun> gunDic = new Dictionary<string, Gun>();
-    private Dictionary<string, ClossWeapon> clossWeaponDic = new Dictionary<string, ClossWeapon>();
+    private Dictionary<string, ClossWeapon> handDic = new Dictionary<string, ClossWeapon>();
+    private Dictionary<string, ClossWeapon> axeDic = new Dictionary<string, ClossWeapon>();
+    private Dictionary<string, ClossWeapon> pickaxeDic = new Dictionary<string, ClossWeapon>();
 
     //필요한 컴포넌트
     [SerializeField]
     private GunController gunController;
     [SerializeField]
     private HandController handController;
-
+    [SerializeField]
+    private AxeController axeController;
+    [SerializeField]
+    private pickAxeController pickaxeController;
     void Start()
     {
         for (int i = 0; i < guns.Length; i++)
@@ -43,7 +52,18 @@ public class WeaponManager : MonoBehaviour
         }
         for (int i = 0; i < hands.Length; i++)
         {
-            clossWeaponDic.Add(hands[i].ClossWeaponName, hands[i]);
+            handDic.Add(hands[i].ClossWeaponName, hands[i]);
+            Debug.Log(hands[i].ClossWeaponName );
+        }
+        for (int i = 0; i < axes.Length; i++)
+        {
+            axeDic.Add(axes[i].ClossWeaponName,axes[i]);
+            Debug.Log(axes[i].ClossWeaponName );
+        }
+        for (int i = 0; i < pickaxes.Length; i++)
+        {
+            pickaxeDic.Add(pickaxes[i].ClossWeaponName, pickaxes[i]);
+            Debug.Log(pickaxes[i].ClossWeaponName);
         }
     }
 
@@ -54,13 +74,23 @@ public class WeaponManager : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Alpha1))
             {
-               // Debug.Log("맨손으로 바꾸기");
-                StartCoroutine(ChangeWeaponCoroutine("HAND", "맨손"));
+               Debug.Log("맨손으로 바꾸기");
+                StartCoroutine(ChangeWeaponCoroutine("HAND", "Hand"));
             }
             else if (Input.GetKeyDown(KeyCode.Alpha2))
             {
-                //Debug.Log("총1으로 바꾸기");
+                Debug.Log("총1으로 바꾸기");
                 StartCoroutine(ChangeWeaponCoroutine("GUN", "SubMachineGun1"));
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha3))
+            {
+                Debug.Log("도끼로 바꾸기");
+                StartCoroutine(ChangeWeaponCoroutine("AXE", "Axe"));
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha4))
+            {
+                Debug.Log("곡괭이로 바꾸기");
+                StartCoroutine(ChangeWeaponCoroutine("PICKAXE", "PickAxe"));
             }
         }
     }
@@ -91,18 +121,34 @@ public class WeaponManager : MonoBehaviour
             case "HAND":
                 HandController.isActivate = false;
                 break;
+            case "AXE":
+                AxeController.isActivate = false;
+                break;
+            case "PICKAXE":
+                pickAxeController.isActivate = false;
+                break;
         }
     }
     private void WeaponChange(string _type, string _name)
     {
         if (_type == "GUN")
-        
+        {
             gunController.GunChange(gunDic[_name]);
-        
+        }
         else if (_type == "HAND")
-        
-            handController.HandChange(clossWeaponDic[_name]); 
-        
+        {
+            handController.CloseWeaponChange(handDic[_name]);
+        }
+        else if (_type == "AXE")
+        {
+            axeController.CloseWeaponChange(axeDic[_name]);
+        }
+        else if (_type == "PICKAXE")
+        {
+            pickaxeController.CloseWeaponChange(pickaxeDic[_name]);
+        }
+
+
     }
 
 }

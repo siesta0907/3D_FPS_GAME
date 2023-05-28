@@ -18,5 +18,6 @@ public class ClossWeapon : MonoBehaviour
     public float attackDelayA; //공격 활성화 시점
     public float attackDelayB; //공격 비활성화 시점
 
-    public Animator anim; 
+    public Animator anim;
+
 }

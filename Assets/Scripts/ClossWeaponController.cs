@@ -2,31 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ClossWeaponController : MonoBehaviour
+public abstract class ClossWeaponController : MonoBehaviour
 {
-    public static bool isActivate = false;
+
 
     //현재 장착된 무기 타입
     [SerializeField]
-    private ClossWeapon currentHand;
+    protected ClossWeapon currentCloseWeapon;
 
 
-    private bool isAttack = false;
-    private bool isSwing = false;
-    private RaycastHit hitInfo;
+    protected bool isAttack = false;
+    protected bool isSwing = false;
+    protected RaycastHit hitInfo;
 
 
-
-    // Start is called before the first frame update
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (isActivate)
-            TryAttack();
-    }
-
-    private void TryAttack()
+    protected void TryAttack()
     {
         if (Input.GetButton("Fire1"))
         {
@@ -37,57 +27,48 @@ public class ClossWeaponController : MonoBehaviour
             }
         }
     }
-    IEnumerator AttackCoroutine()
+    protected IEnumerator AttackCoroutine()
     {
         isAttack = true;
-        currentHand.anim.SetTrigger("Attack");
+        currentCloseWeapon.anim.SetTrigger("Attack");
 
-        yield return new WaitForSeconds(currentHand.attackDelayA);
+        yield return new WaitForSeconds(currentCloseWeapon.attackDelayA);
 
         isSwing = true;
         StartCoroutine(HitCoroutine());
-        yield return new WaitForSeconds(currentHand.attackDelayB);
+        yield return new WaitForSeconds(currentCloseWeapon.attackDelayB);
 
         isSwing = false;
-        yield return new WaitForSeconds(currentHand.attackDelay - currentHand.attackDelayA - currentHand.attackDelayB);
+        yield return new WaitForSeconds(currentCloseWeapon.attackDelay - currentCloseWeapon.attackDelayA - currentCloseWeapon.attackDelayB);
         isAttack = false;
     }
-    IEnumerator HitCoroutine()
+    protected abstract IEnumerator HitCoroutine();
+   
+    protected bool CheckObject()
     {
-        while (isSwing)
+        if (Physics.Raycast(transform.position, transform.forward, out hitInfo, currentCloseWeapon.range))
         {
-            if (CheckObject())
-            {
-                //충돌했음.
-                isSwing = false;
-                Debug.Log(hitInfo.transform.name);
-            }
-            yield return null;
-        }
-    }
-    private bool CheckObject()
-    {
-        if (Physics.Raycast(transform.position, transform.forward, out hitInfo, currentHand.range))
-        {
+            Debug.Log(hitInfo);
             return true;
         }
         return false;
     }
 
-    public void HandChange(ClossWeapon _hand)
+    //완성함수이지만, 추가 편집 가능한 함수
+    public virtual void CloseWeaponChange(ClossWeapon _closeWeapon)
     {
         if (WeaponManager.currentWeapon != null)
         {
             WeaponManager.currentWeapon.gameObject.SetActive(false);
         }
-        currentHand = _hand;
+        currentCloseWeapon = _closeWeapon;
 
-        WeaponManager.currentWeapon = currentHand.GetComponent<Transform>();
-        WeaponManager.currentWeaponAnim = currentHand.anim;
+        WeaponManager.currentWeapon = currentCloseWeapon.GetComponent<Transform>();
+        WeaponManager.currentWeaponAnim = currentCloseWeapon.anim;
         //초기화
-        currentHand.transform.localPosition = new Vector3(1.38f, 0.47f, 0);  //맨손으로 바꿀때 위치가 이상해서 바꿈
+        //currentCloseWeapon.transform.localPosition = new Vector3(1.38f, 0.47f, 0);  //맨손으로 바꿀때 위치가 이상해서 바꿈
 
-        currentHand.gameObject.SetActive(true);
-        isActivate = true;
+        currentCloseWeapon.gameObject.SetActive(true);
+
     }
 }
